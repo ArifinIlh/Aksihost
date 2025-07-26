@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read \Illuminate\Support\Collection $durations
+ */
 class HostingPackage extends Model
 {
     use HasFactory;
@@ -18,12 +21,9 @@ class HostingPackage extends Model
         'price_monthly',
         'price_yearly',
         'promo_price',
-
-        
         'has_ssl',
         'has_backup',
         'has_wordpress',
-
         'feature_1',
         'feature_2',
         'feature_3',
@@ -32,8 +32,7 @@ class HostingPackage extends Model
     ];
 
     public function prices()
-{
-    return $this->hasMany(HostingPackagePrice::class);
-}
-
+    {
+        return $this->hasMany(HostingPackagePrice::class);
+    }
 }

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>AksiHot - Hosting, Domain & POS</title>
+    <title>AksiHost - Hosting, Domain & POS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- AdminLTE + Font Awesome -->
@@ -266,15 +266,18 @@
                     <li><a href="{{ route('user.domain.index') }}" class="text-white text-decoration-none">Domain</a></li>
                 </ul>
             </div>
-            <div class="col-md-2 mb-4">
-                <h6 class="fw-bold mb-3">Kebijakan</h6>
-                <ul class="list-unstyled small">
-                    <li><a href="/privacy-policy" class="text-white text-decoration-none">Kebijakan Privasi</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">SLA & ToS</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Refund Policy</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Migrasi Layanan</a></li>
-                </ul>
-            </div>
+<div class="col-md-2 mb-4">
+    <h6 class="fw-bold mb-3">Kebijakan</h6>
+    <ul class="list-unstyled small">
+   <li><a href="{{ route('legal.kebijakan') }}" class="text-white text-decoration-none">Kebijakan Privasi</a></li>
+<li><a href="{{ route('legal.sla') }}" class="text-white text-decoration-none">SLA</a></li>
+<li><a href="{{ route('legal.tos') }}" class="text-white text-decoration-none">ToS</a></li>
+<li><a href="{{ route('legal.refund') }}" class="text-white text-decoration-none">Refund Policy</a></li>
+<li><a href="{{ route('legal.migrasi') }}" class="text-white text-decoration-none">Migrasi Layanan</a></li>
+
+    </ul>
+</div>
+
             <div class="col-md-3 mb-4">
                 <h6 class="fw-bold mb-3">Kontak Kami</h6>
                 <ul class="list-unstyled small">
@@ -285,7 +288,7 @@
             </div>
         </div>
         <div class="text-center mt-4 border-top pt-3 small">
-            &copy; {{ date('Y') }} AksiHot. All rights reserved.
+            &copy; {{ date('Y') }} AksiHost. All rights reserved.
         </div>
     </div>
 </footer>

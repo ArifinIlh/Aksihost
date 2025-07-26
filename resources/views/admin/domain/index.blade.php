@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Domain Pelanggan')
+@section('title')
 
 @section('content')
 <div class="container-fluid">
@@ -63,9 +63,12 @@
                 <td>
                     {{ $item->expired_at ? \Carbon\Carbon::parse($item->expired_at)->format('d M Y') : '-' }}
                 </td>
-                <td>
-                    <a href="{{ route('admin.domains.renew', $item->id) }}" class="btn btn-sm btn-primary">Perpanjang</a>
-                </td>
+               
+                    <td class="d-flex gap-1 flex-wrap">
+    <a href="{{ route('admin.domains.renew', $item->id) }}" class="btn btn-sm btn-primary">Perpanjang</a>
+    <a href="{{ route('admin.domains.invoice', $item->id) }}" class="btn btn-sm btn-secondary">Invoice</a>
+</td>
+
             </tr>
             @empty
             <tr>

@@ -180,7 +180,7 @@
                                 <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
                                 <h4 class="text-muted mb-3">Belum Ada Pembelian</h4>
                                 <p class="text-muted mb-4">Anda belum memiliki riwayat pembelian domain atau hosting.</p>
-                                <a href="{{ route('user.domains.index') }}" class="btn btn-primary rounded-pill me-2">
+                                <a href="{{ route('user.domain.index') }}" class="btn btn-primary rounded-pill me-2">
                                     <i class="fas fa-globe me-1"></i>Beli Domain
                                 </a>
                                 <a href="{{ route('user.hosting.index') }}" class="btn btn-success rounded-pill">

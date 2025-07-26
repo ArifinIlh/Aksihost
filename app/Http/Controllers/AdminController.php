@@ -11,10 +11,20 @@ use App\Models\Hosting;
 
 class AdminController extends Controller
 {
+
     public function index()
-    {
-        return view('admin.dashboard');
-    }
+{
+    $totalDomainIncome = Domain::sum('price');
+    $totalHostingIncome = Hosting::sum('price');
+    $totalIncome = $totalDomainIncome + $totalHostingIncome;
+
+    return view('admin.dashboard', compact(
+        'totalDomainIncome',
+        'totalHostingIncome',
+        'totalIncome'
+    ));
+}
+
 
     public function createOrder()
     {

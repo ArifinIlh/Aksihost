@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('hosting_package_prices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('hosting_package_id')->constrained()->onDelete('cascade');
-            $table->integer('duration_months'); // Contoh: 6, 12, 24
+            $table->integer('duration_months'); 
             $table->decimal('original_price', 12, 2);
             $table->decimal('discounted_price', 12, 2)->nullable();
             $table->timestamps();

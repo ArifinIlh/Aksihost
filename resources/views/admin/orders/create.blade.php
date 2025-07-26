@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Buat Pembelian Baru')
+@section('title',)
 
 @section('content')
 <div class="container">
@@ -18,7 +18,7 @@
 
         {{-- Pilih User --}}
         <div class="mb-3">
-            <label class="form-label">Pilih Pengguna</label>
+            <label class="js-example-basic-single">Pilih Pengguna</label>
             <select name="user_id" class="form-control" required>
                 <option value="">-- Pilih Pengguna --</option>
                 @foreach($users as $user)

@@ -65,5 +65,12 @@ public function processRenewal(Request $request, $id)
    return redirect()->route('admin.domain.index')->with('success', 'Domain berhasil diperpanjang.');
 
 }
+public function invoice($id)
+{
+    $domain = OrderItem::with('order.user')->findOrFail($id);
+
+    return view('admin.domain.invoice', compact('domain'));
+}
+
 
 }

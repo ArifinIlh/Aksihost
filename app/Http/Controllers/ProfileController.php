@@ -6,13 +6,14 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Tampilkan halaman edit profil.
      */
     public function edit(Request $request): View
     {
@@ -22,23 +23,43 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Update profil atau password.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Update data profil
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Cek apakah ingin ganti password
+        if ($request->filled('current_password') && $request->filled('password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return Redirect::back()->with('error', 'Password lama tidak sesuai.');
+            }
+
+            $request->validate([
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+            ]);
+
+            $user->update([
+                'password' => bcrypt($request->password),
+            ]);
+
+            return Redirect::route('profile.edit')->with('success', 'Password berhasil diperbarui.');
+        }
+
+        return Redirect::route('profile.edit')->with('success', 'Profil berhasil diperbarui.');
     }
 
     /**
-     * Delete the user's account.
+     * Hapus akun pengguna.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -49,7 +70,6 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
-
         $user->delete();
 
         $request->session()->invalidate();

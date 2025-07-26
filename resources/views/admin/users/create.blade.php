@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Tambah User')
+@section('title',)
 
 @section('content')
 <div class="container">

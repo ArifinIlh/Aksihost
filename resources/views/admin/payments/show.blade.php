@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Detail Pembayaran')
+@section('title',)
 
 @section('content')
 <div class="container mt-4">

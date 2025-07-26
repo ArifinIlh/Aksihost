@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'AksiHot - Hosting, Domain & POS')</title>
+    <title>@yield('title', 'AksiHost - Hosting, Domain & POS')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- AdminLTE + Font Awesome -->
@@ -27,28 +27,26 @@
         footer {
             background-color: #f8f9fa;
         }
-
-        
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <div class="navbar navbar-custom d-flex justify-content-between align-items-center">
-        <div class="fw-bold text-primary fs-4">AksiHot</div>
-        <div>
-            <a href="{{ url('/') }}" class="mx-2 text-dark text-decoration-none">Beranda</a>
-            <a href="#layanan" class="mx-2 text-dark text-decoration-none">Layanan</a>
-            <a href="#domain" class="mx-2 text-dark text-decoration-none">Domain</a>
-            <a href="#hosting" class="mx-2 text-dark text-decoration-none">Hosting</a>
-            <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Masuk</a>
-            <a href="{{ route('register') }}" class="btn btn-outline-primary btn-sm">Daftar</a>
-        </div>
+<!-- Navbar -->
+<div class="navbar navbar-custom d-flex justify-content-between align-items-center">
+    <div class="fw-bold text-primary fs-4">AksiHost</div>
+    <div>
+        <a href="{{ url('/') }}" class="mx-2 text-dark text-decoration-none">Beranda</a>
+        <a href="#layanan" class="mx-2 text-dark text-decoration-none">Layanan</a>
+        <a href="#domain" class="mx-2 text-dark text-decoration-none">Domain</a>
+        <a href="#hosting" class="mx-2 text-dark text-decoration-none">Hosting</a>
+        <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Masuk</a>
+        <a href="{{ route('register') }}" class="btn btn-outline-primary btn-sm">Daftar</a>
     </div>
+</div>
 
-    @yield('content')
+@yield('content')
 
-
+<!-- Footer -->
 <footer class="bg-black text-white pt-5 pb-4 mt-5 shadow-sm">
     <div class="container">
         <div class="row">
@@ -78,10 +76,11 @@
             <div class="col-md-2 mb-4">
                 <h6 class="fw-bold mb-3">Kebijakan</h6>
                 <ul class="list-unstyled small">
-                    <li><a href="/privacy-policy" class="text-white text-decoration-none">Kebijakan Privasi</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">SLA & ToS</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Refund Policy</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Migrasi Layanan</a></li>
+                    <li><a href="{{ route('legal.kebijakan') }}" class="text-white text-decoration-none">Kebijakan Privasi</a></li>
+                    <li><a href="{{ route('legal.sla') }}" class="text-white text-decoration-none">SLA</a></li>
+                    <li><a href="{{ route('legal.tos') }}" class="text-white text-decoration-none">ToS</a></li>
+                    <li><a href="{{ route('legal.refund') }}" class="text-white text-decoration-none">Refund Policy</a></li>
+                    <li><a href="{{ route('legal.migrasi') }}" class="text-white text-decoration-none">Migrasi Layanan</a></li>
                 </ul>
             </div>
             <div class="col-md-3 mb-4">
@@ -94,15 +93,16 @@
             </div>
         </div>
         <div class="text-center mt-4 border-top pt-3 small">
-            &copy; {{ date('Y') }} AksiHot. All rights reserved.
+            &copy; {{ date('Y') }} AksiHost. All rights reserved.
         </div>
     </div>
 </footer>
 
+<!-- Script -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-    <!-- Script -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+@stack('scripts')
 </body>
 </html>

@@ -34,6 +34,19 @@ class DomainController extends Controller
 
         $extensions = DomainPrice::all();
 
+        if (!$isTaken) {
+            $cart = session()->get('domain_cart', []);
+            if (!isset($cart[$fullDomain])) {
+                $cart[$fullDomain] = [
+                    'domain' => $fullDomain,
+                    'name' => $fullDomain,
+                    'extension_id' => $extension->id,
+                    'price' => $extension->price,
+                ];
+                session()->put('domain_cart', $cart);
+            }
+        }
+
         return view('user.domain.index', [
             'extensions' => $extensions,
             'result' => [
@@ -50,22 +63,29 @@ class DomainController extends Controller
         $request->validate([
             'domain' => 'required|string',
             'extension_id' => 'required|exists:domain_prices,id',
-            'price' => 'required|numeric',
         ]);
 
-        $cart = session()->get('domain_cart', []);
+        $fullDomain = strtolower($request->domain);
+        $extension = DomainPrice::findOrFail($request->extension_id);
 
-        if (!isset($cart[$request->domain])) {
-            $cart[$request->domain] = [
-                'domain' => $request->domain,
-                'name' => $request->domain,
-                'extension_id' => $request->extension_id,
-                'price' => $request->price,
-            ];
-            session()->put('domain_cart', $cart);
+        $isTaken = OrderItem::where('product_type', 'domain')
+            ->where('product_name', $fullDomain)
+            ->exists();
+
+        if ($isTaken) {
+            return back()->with('error', 'Domain sudah terdaftar.');
         }
 
-        return redirect()->route('user.domain.cart')->with('success', 'Domain ditambahkan ke keranjang.');
+        $cart = session()->get('domain_cart', []);
+        $cart[$fullDomain] = [
+            'domain' => $fullDomain,
+            'name' => $fullDomain,
+            'extension_id' => $extension->id,
+            'price' => $extension->price,
+        ];
+        session()->put('domain_cart', $cart);
+
+        return redirect()->route('user.domain.cart')->with('success', 'Domain berhasil ditambahkan ke keranjang.');
     }
 
     public function cart()
@@ -86,19 +106,51 @@ class DomainController extends Controller
         return redirect()->route('user.domain.cart')->with('success', 'Domain dihapus dari keranjang.');
     }
 
-    public function checkout(Request $request)
+    public function addHosting(Request $request)
+    {
+        $request->validate([
+            'hosting_id' => 'required|exists:hosting_packages,id',
+            'duration' => 'required|integer|min:1'
+        ]);
+
+        $package = HostingPackage::with('prices')->findOrFail($request->hosting_id);
+        $priceModel = $package->prices->firstWhere('duration_months', $request->duration);
+
+        if (!$priceModel) {
+            return back()->with('error', 'Durasi tidak tersedia untuk paket ini.');
+        }
+
+        $price = $priceModel->discounted_price ?? $priceModel->original_price;
+        $hostingCart = session()->get('hosting_cart', []);
+
+        $hostingCart[] = [
+            'name' => $package->name,
+            'price' => $price,
+            'duration' => $request->duration,
+            'package_id' => $package->id,
+        ];
+
+        session()->put('hosting_cart', $hostingCart);
+
+        return back()->with('success', 'Paket hosting berhasil ditambahkan ke keranjang.');
+    }
+
+    public function checkout()
     {
         $domainCart = session()->get('domain_cart', []);
         $hostingCart = session()->get('hosting_cart', []);
 
-        if (empty($domainCart) && empty($hostingCart)) {
+        $validDomain = array_filter($domainCart, fn($d) => isset($d['domain'], $d['price']));
+        $validHosting = array_filter($hostingCart, fn($h) => isset($h['name'], $h['price'], $h['duration']));
+
+        if (empty($validDomain) && empty($validHosting)) {
             return redirect()->route('user.domain.cart')->with('error', 'Keranjang kosong.');
         }
 
         DB::beginTransaction();
         try {
-            $domainTotal = collect($domainCart)->sum('price');
-            $hostingTotal = collect($hostingCart)->sum(fn($item) => $item['price'] * $item['duration']);
+            $domainTotal = collect($validDomain)->sum('price');
+            $hostingTotal = collect($validHosting)->sum(fn($item) => $item['price'] * $item['duration']);
             $total = $domainTotal + $hostingTotal;
 
             $order = Order::create([
@@ -107,7 +159,7 @@ class DomainController extends Controller
                 'total' => $total,
             ]);
 
-            foreach ($domainCart as $item) {
+            foreach ($validDomain as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_type' => 'domain',
@@ -120,7 +172,7 @@ class DomainController extends Controller
                 ]);
             }
 
-            foreach ($hostingCart as $item) {
+            foreach ($validHosting as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_type' => 'hosting',
@@ -129,6 +181,7 @@ class DomainController extends Controller
                     'status' => 'unpaid',
                     'meta' => json_encode([
                         'duration' => $item['duration'],
+                        'package_id' => $item['package_id'],
                     ]),
                 ]);
             }
@@ -149,7 +202,7 @@ class DomainController extends Controller
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 
-        return view('user.domain.payment-method', compact('order'));
+        return view('user.payment', compact('order'));
     }
 
     public function processPayment(Request $request, $id)
@@ -190,36 +243,4 @@ class DomainController extends Controller
 
         return view('user.orders.invoice', compact('order'));
     }
-    public function addHosting(Request $request)
-{
-    $request->validate([
-        'hosting_id' => 'required|exists:hosting_packages,id',
-        'duration' => 'required|integer|min:1'
-    ]);
-
-    $package = HostingPackage::with('prices')->findOrFail($request->hosting_id);
-
-    // Cari harga berdasarkan durasi yang admin udah buat
-    $priceModel = $package->prices->firstWhere('duration_months', $request->duration);
-
-    if (!$priceModel) {
-        return back()->with('error', 'Durasi tidak tersedia untuk paket ini.');
-    }
-
-    $price = $priceModel->discounted_price ?? $priceModel->original_price;
-
-    $hostingCart = session()->get('hosting_cart', []);
-
-    $hostingCart[] = [
-        'name' => $package->name,
-        'price' => $price,
-        'duration' => $request->duration,
-        'package_id' => $package->id,
-    ];
-
-    session()->put('hosting_cart', $hostingCart);
-
-    return back()->with('success', 'Paket hosting berhasil ditambahkan ke keranjang.');
-}
-
 }

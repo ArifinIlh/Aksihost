@@ -37,7 +37,7 @@ class HostingController extends Controller
             'feature_4' => 'nullable|string',
             'feature_5' => 'nullable|string',
             'durations' => 'required|array|min:1',
-            'durations.*.duration_months' => 'required|integer|min:1',
+            'durations.*.duration_days' => 'required|integer|min:1',
             'durations.*.original_price' => 'required|numeric|min:0',
             'durations.*.discounted_price' => 'nullable|numeric|min:0',
         ]);
@@ -46,9 +46,9 @@ class HostingController extends Controller
         $validated['has_backup'] = $request->has('has_backup');
         $validated['has_wordpress'] = $request->has('has_wordpress');
 
-        $durations = collect($request->durations)->sortBy('duration_months');
+        $durations = collect($request->durations)->sortBy('duration_days');
         $shortest = $durations->first();
-        $yearly = $durations->firstWhere('duration_months', 12);
+        $yearly = $durations->firstWhere('duration_days', 365) ?? $durations->firstWhere('duration_days', 360);
 
         $validated['price_monthly'] = $shortest['discounted_price'] ?? $shortest['original_price'];
         $validated['price_yearly'] = $yearly
@@ -59,7 +59,7 @@ class HostingController extends Controller
 
         foreach ($durations as $priceData) {
             $hosting->prices()->create([
-                'duration_months' => $priceData['duration_months'],
+                'duration_days' => $priceData['duration_days'],
                 'original_price' => $priceData['original_price'],
                 'discounted_price' => $priceData['discounted_price'] ?? null,
             ]);
@@ -85,7 +85,7 @@ class HostingController extends Controller
             'feature_4' => 'nullable|string',
             'feature_5' => 'nullable|string',
             'durations' => 'required|array|min:1',
-            'durations.*.duration_months' => 'required|integer|min:1',
+            'durations.*.duration_days' => 'required|integer|min:1',
             'durations.*.original_price' => 'required|numeric|min:0',
             'durations.*.discounted_price' => 'nullable|numeric|min:0',
         ]);
@@ -94,9 +94,9 @@ class HostingController extends Controller
         $validated['has_backup'] = $request->has('has_backup');
         $validated['has_wordpress'] = $request->has('has_wordpress');
 
-        $durations = collect($request->durations)->sortBy('duration_months');
+        $durations = collect($request->durations)->sortBy('duration_days');
         $shortest = $durations->first();
-        $yearly = $durations->firstWhere('duration_months', 12);
+        $yearly = $durations->firstWhere('duration_days', 365) ?? $durations->firstWhere('duration_days', 360);
 
         $validated['price_monthly'] = $shortest['discounted_price'] ?? $shortest['original_price'];
         $validated['price_yearly'] = $yearly
@@ -105,10 +105,12 @@ class HostingController extends Controller
 
         $hosting->update($validated);
 
+        // Hapus harga lama
         $hosting->prices()->delete();
+
         foreach ($durations as $priceData) {
             $hosting->prices()->create([
-                'duration_months' => $priceData['duration_months'],
+                'duration_days' => $priceData['duration_days'],
                 'original_price' => $priceData['original_price'],
                 'discounted_price' => $priceData['discounted_price'] ?? null,
             ]);
@@ -128,7 +130,8 @@ class HostingController extends Controller
         $hosting->load('prices');
         $hosting->durations = $hosting->prices->map(function ($price) {
             return [
-                'duration_months' => $price->duration_months,
+                'duration_months' => $price->duration_days == 365 ? 12 : $price->duration_days / 30,
+                'duration_days' => $price->duration_days,
                 'original_price' => $price->original_price,
                 'discounted_price' => $price->discounted_price,
             ];
@@ -139,6 +142,7 @@ class HostingController extends Controller
 
     public function destroy(HostingPackage $hosting)
     {
+        $hosting->prices()->delete();
         $hosting->delete();
         return redirect()->route('admin.hosting.index')->with('success', 'Paket hosting berhasil dihapus.');
     }

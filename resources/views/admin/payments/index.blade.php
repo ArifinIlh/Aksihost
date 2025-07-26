@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Kelola Pembayaran')
+@section('title',)
 
 @section('content')
 <div class="container-fluid">
@@ -16,11 +16,11 @@
                 <thead class="table-light">
                     <tr>
                         <th>Invoice</th>
-                        <th>User</th>
+                        <th>Pengguna</th>
                         <th>Metode</th>
                         <th>Status</th>
                         <th>Total</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,36 +28,41 @@
                         <tr>
                             <td>{{ $payment->invoice_number }}</td>
                             <td>{{ $payment->user->name ?? '-' }}</td>
-                            <td>{{ ucfirst($payment->method) }}</td>
                             <td>
-                                <span class="badge bg-{{ $payment->status == 'verified' ? 'success' : ($payment->status == 'pending' ? 'warning' : 'danger') }}">
+                                <span class="badge bg-dark text-uppercase">{{ $payment->method }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 
+                                    $payment->status === 'verified' ? 'success' : 
+                                    ($payment->status === 'pending' ? 'warning' : 
+                                    ($payment->status === 'refunded' ? 'info' : 'danger')) 
+                                }}">
                                     {{ ucfirst($payment->status) }}
                                 </span>
                             </td>
                             <td>Rp{{ number_format($payment->total, 0, ',', '.') }}</td>
-                            <td>
-                                @if($payment->status === 'pending')
-                                    <form action="{{ route('admin.payments.verify', $payment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button class="btn btn-success btn-sm">✅ Verifikasi</button>
-                                    </form>
-                                    <form action="{{ route('admin.payments.reject', $payment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button class="btn btn-danger btn-sm">❌ Tolak</button>
-                                    </form>
-                                @elseif($payment->status === 'verified')
-                                    <form action="{{ route('admin.payments.refund', $payment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button class="btn btn-warning btn-sm">💸 Refund</button>
-                                    </form>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
+                            <td class="text-center">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    @if($payment->status === 'pending')
+                                        <form action="{{ route('admin.payments.verify', $payment) }}" method="POST">
+                                            @csrf
+                                            <button class="btn btn-success btn-sm">Verifikasi</button>
+                                        </form>
+                                        <form action="{{ route('admin.payments.reject', $payment) }}" method="POST">
+                                            @csrf
+                                            <button class="btn btn-danger btn-sm">Tolak</button>
+                                        </form>
+                                    @elseif($payment->status === 'verified')
+                                        <form action="{{ route('admin.payments.refund', $payment) }}" method="POST">
+                                            @csrf
+                                            <button class="btn btn-warning btn-sm">Refund</button>
+                                        </form>
+                                    @endif
 
-                                 <!-- Tombol Tambahan -->
-    <a href="{{ route('admin.payments.show', $payment) }}" class="btn btn-primary btn-sm mt-1">Detail</a>
-    <a href="{{ route('admin.payments.invoice', $payment) }}" target="_blank" class="btn btn-secondary btn-sm mt-1"> Invoice</a>
-    {{-- <a href="{{ route('admin.payments.edit', $payment) }}" class="btn btn-info btn-sm mt-1">✏️ Edit</a> --}}
+                                    <a href="{{ route('admin.payments.show', $payment) }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('admin.payments.invoice', $payment) }}" target="_blank" class="btn btn-secondary btn-sm">Invoice</a>
+                                    <a href="{{ route('admin.payments.edit', $payment) }}" class="btn btn-info btn-sm">Edit</a>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

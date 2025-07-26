@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Dashboard Admin')
+@section('title',)
 
 @section('content')
 <div class="container-fluid px-4">
@@ -48,6 +48,36 @@
             </div>
         </div>
     </div>
+  <div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card bg-gradient-primary">
+            <div class="stat-icon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="stat-number">Rp{{ number_format($totalDomainIncome, 0, ',', '.') }}</div>
+            <div class="stat-label">Penghasilan Domain</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card bg-gradient-success">
+            <div class="stat-icon">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="stat-number">Rp{{ number_format($totalHostingIncome, 0, ',', '.') }}</div>
+            <div class="stat-label">Penghasilan Hosting</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card bg-gradient-info">
+            <div class="stat-icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-number">Rp{{ number_format($totalIncome, 0, ',', '.') }}</div>
+            <div class="stat-label">Total Penghasilan</div>
+        </div>
+    </div>
+</div>
+
 
 <style>
 

@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Edit Paket Hosting')
+@section('title',)
 
 @section('content')
 <div class="container-fluid px-4">
@@ -55,12 +55,12 @@
                     @foreach ($hosting->durations ?? [] as $index => $price)
                         <div class="row price-group mb-3 align-items-center">
                             <div class="col-md-3">
-                                <input type="number" name="durations[{{ $index }}][duration_months]" class="form-control form-control-modern" value="{{ $price['duration_months'] }}" placeholder="Durasi" required>
+                               <input type="number" name="durations[0][duration_days]" class="form-control" placeholder="Durasi (hari)" required>
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" name="durations[{{ $index }}][original_price]" class="form-control form-control-modern" value="{{ $price['original_price'] }}" placeholder="Harga" required>
+                                    <input type="number" name="durations[{{ $index }}][original_price]" class="form-control form-control-modern" value="{{ round($price['original_price']) }}" placeholder="Harga" required>
                                 </div>
                             </div>
                             <div class="col-md-4">

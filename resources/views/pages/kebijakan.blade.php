@@ -10,12 +10,11 @@
             <nav>
                 <p class="fw-semibold mb-2"></p>
                 <div class="d-flex flex-column gap-2">
-                    <a href="#" class="text-decoration-none text-primary">Privacy Policy</a>
-                    <a href="#" class="text-decoration-none text-primary">kosong</a>
-                    <a href="#" class="text-decoration-none text-primary">kosong</a>
-                    <a href="#" class="text-decoration-none text-primary">kosong</a>
-                    <a href="#" class="text-decoration-none text-primary">kosong</a>
-                    <a href="#" class="text-decoration-none text-primary">kosong</a>
+                    <a href="{{ route('legal.kebijakan') }}" class="text-decoration-none text-primary">Privacy Policy</a>
+                    <a href="{{ route('legal.sla') }}" class="text-decoration-none text-primary">Sla</a>
+                    <a href="{{ route('legal.tos') }}" class="text-decoration-none text-primary">Tos</a>
+                    <a href="{{ route('legal.refund') }}" class="text-decoration-none text-primary">Refund Policy</a>
+                    <a href="{{ route('legal.migrasi') }}" class="text-decoration-none text-primary">Migrasi Layanan</a>
                 </div>
             </nav>
         </div>

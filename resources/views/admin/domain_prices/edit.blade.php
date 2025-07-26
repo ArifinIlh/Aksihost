@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Edit Harga Domain')
+@section('title')
 
 @section('content')
 <div class="container">

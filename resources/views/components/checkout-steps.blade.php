@@ -33,7 +33,7 @@
   }
 
   .step.active {
-      background-color: #fd7e14; /* Orange */
+      background-color: #0073ff; /* Orange */
       color: white;
   }
 

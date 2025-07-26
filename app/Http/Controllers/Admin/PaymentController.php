@@ -56,4 +56,28 @@ public function invoice($id)
     return view('admin.payments.invoice', compact('payment'));
 }
 
+public function edit(Payment $payment)
+{
+    return view('admin.payments.edit', compact('payment'));
+}
+public function update(Request $request, Payment $payment)
+{
+    $request->validate([
+        'status' => 'required|in:pending,verified,rejected,refunded',
+    ]);
+
+    $payment->status = $request->status;
+
+    if ($request->status === 'verified') {
+        $payment->verified_at = now();
+    } elseif ($request->status === 'refunded') {
+        $payment->refunded_at = now();
+    }
+
+    $payment->save();
+
+    return redirect()->route('admin.payments.index')->with('success', 'Status pembayaran berhasil diperbarui.');
+}
+
+
 }
